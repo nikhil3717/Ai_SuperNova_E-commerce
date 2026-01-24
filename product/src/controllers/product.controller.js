@@ -9,6 +9,7 @@ const createProduct = async (req, res) => {
       description,
       priceAmount,
       priceCurrency = "INR",
+      stock
     } = req.body;
 
     if (!title || !priceAmount) {
@@ -43,6 +44,7 @@ const createProduct = async (req, res) => {
       price,
       seller,
       image,
+      stock
     });
 
     return res.status(201).json({
@@ -60,42 +62,42 @@ const createProduct = async (req, res) => {
 };
 
 
-const getProduct = async (req,res) => {
-    const {q,minprice,maxprice,skip = 0, limit = 20} = req.query;
+const getProduct = async (req, res) => {
+  const { q, minprice, maxprice, skip = 0, limit = 20 } = req.query;
 
-const filter = {}
+  const filter = {}
 
-if(q) {
-  filter.$text = {$search:q}
+  if (q) {
+    filter.$text = { $search: q }
+  }
+
+  if (minprice) {
+    filter['price.amount'] = { ...filter['price.amount'], $gte: Number(minprice) }
+  }
+
+  if (maxprice) {
+    filter['price.amount'] = { ...filter['price.amount'], $lte: Number(maxprice) }
+  }
+
+  const products = await ProductModel.find(filter).skip(Number(skip)).limit(Math.min(Number(limit), 20))
+
+
+  return res.status(200).json({ data: products })
 }
 
-if(minprice) {
-  filter['price.amount'] = {...filter['price.amount'], $gte:Number(minprice)}
-}
 
-if(maxprice) {
-  filter['price.amount'] = {...filter['price.amount'], $lte:Number(maxprice)}
-}
+const getProductById = async (req, res) => {
+  const { id } = req.params
 
-const products = await ProductModel.find(filter).skip(Number(skip)).limit(Math.min(Number(limit), 20))
+  const product = await ProductModel.findById(id)
 
+  if (!product) {
+    return res.status(404).json({ message: "product not found" })
+  }
 
-return res.status(200).json({data:products})
-}
-
-
-const getProductById = async (req,res) => {
-       const {id} = req.params
-
-       const product = await ProductModel.findById(id)
-
-       if(!product) {
-        return res.status(404).json({message:"product not found"})
-       }
-
-       res.status(200).json({
-        product: product
-       })
+  res.status(200).json({
+    product: product
+  })
 }
 
 const updateProductById = async (req, res) => {
@@ -170,22 +172,22 @@ const DeleteProduct = async (req, res) => {
 };
 
 
-const getSellerProducts = async (req,res) => {
+const getSellerProducts = async (req, res) => {
   const seller = req.user
 
-  const {skip = 0, limit = 20} = req.query;
+  const { skip = 0, limit = 20 } = req.query;
 
-  const products = await ProductModel.find({seller:seller.id}).skip(skip).limit(Math.min(limit))
-  
-  return res.status(200).json({product: products})
+  const products = await ProductModel.find({ seller: seller.id }).skip(skip).limit(Math.min(limit))
+
+  return res.status(200).json({ product: products })
 }
 
- 
 
-module.exports = { 
+
+module.exports = {
   createProduct
-  ,getProduct,
-  getProductById ,
+  , getProduct,
+  getProductById,
   updateProductById,
   DeleteProduct,
   getSellerProducts

@@ -4,10 +4,10 @@ const addItemToCart = async (req, res) => {
   const { productId, qty } = req.body;
   const user = req.user;
 
-  let cart = await cartModel.findOne({ user: user._id });
+  let cart = await cartModel.findOne({ user: user.id });
 
   if (!cart) {
-    cart = new cartModel({ user: user._id, items: [] });
+    cart = new cartModel({ user: user.id, items: [] });
   }
 
   const existingItemIndex = cart.items.findIndex(
@@ -75,11 +75,11 @@ const getCart = async (req, res) => {
   try {
     const user = req.user;
 
-    let cart = await cartModel.findOne({ user: user._id });
+    let cart = await cartModel.findOne({ user: user.id });
 
     if (!cart) {
       cart = new cartModel({
-        user: user._id,
+        user: user.id,
         items: [],
       });
 
@@ -111,7 +111,7 @@ const deleteCartItem = async (req, res) => {
     const user = req.user;
 
     // Find user's cart
-    const cart = await cartModel.findOne({ user: user._id });
+    const cart = await cartModel.findOne({ user: user.id });
 
     if (!cart) {
       return res.status(404).json({ message: "Cart not found" });
@@ -148,12 +148,12 @@ const clearCart = async (req, res) => {
   try {
     const user = req.user;
 
-    let cart = await cartModel.findOne({ user: user._id });
+    let cart = await cartModel.findOne({ user: user.id });
 
     // If cart does not exist, create empty cart
     if (!cart) {
       cart = new cartModel({
-        user: user._id,
+        user: user.id,
         items: [],
       });
     } else {
@@ -177,4 +177,4 @@ const clearCart = async (req, res) => {
 
 
 
-module.exports = { addItemToCart, updateCartItem, getCart , deleteCartItem, clearCart};
+module.exports = { addItemToCart, updateCartItem, getCart, deleteCartItem, clearCart };
