@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "start": "node server.js",
     "dev": "npx nodemon server.js"
   },
@@ -20,5 +22,9 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.1.5",
     "razorpay": "^2.9.6"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3"
   }
 }
