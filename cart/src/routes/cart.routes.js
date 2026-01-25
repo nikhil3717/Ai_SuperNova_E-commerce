@@ -1,14 +1,14 @@
 const express = require("express")
-const  createAuthMiddleware = require("../middlewares/auth.middleware")
+const createAuthMiddleware = require("../middlewares/auth.middleware")
 const cartController = require("../controllers/cart.controller")
-const validation = require("../middlewares/validation.middleware")
+const validation = require("../middlewares/validators.middleware")
 
 const router = express.Router()
 
 
-router.get("/",createAuthMiddleware(["user"]), cartController.getCart )
+router.get("/", createAuthMiddleware(["user"]), cartController.getCart)
 
-router.post("/items", validation.validateAddItemToCart,createAuthMiddleware(["user"]),cartController.addItemToCart)
+router.post("/items", validation.validateAddItemToCart, createAuthMiddleware(["user"]), cartController.addItemToCart)
 
 router.patch(
   "/items/:productId",
